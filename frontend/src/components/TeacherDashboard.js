@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/userSlice';
-import { clearError } from '../store/pollSlice';
+import { clearError, setPollData } from '../store/pollSlice';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
-import { kickStudent } from '../services/socketService';
+import { kickStudent, joinAsTeacher } from '../services/socketService';
 import Chat from './Chat';
 
 const TeacherDashboard = () => {
@@ -30,11 +30,13 @@ const TeacherDashboard = () => {
 
   useEffect(() => {
     fetchPollStatus();
+    joinAsTeacher();
   }, []);
 
   const fetchPollStatus = async () => {
     try {
       const data = await apiService.getPollStatus();
+      dispatch(setPollData(data));
     } catch (err) {
       console.error('Failed to fetch poll status:', err);
     }

@@ -195,6 +195,8 @@ io.on("connection", (socket) => {
     timeLimit: pollData.timeLimit
   });
 
+  socket.emit("chatHistory", pollData.chatMessages);
+
   socket.on("joinAsTeacher", () => {
     socket.join("teachers");
     socket.emit("teacherJoined", { success: true });
