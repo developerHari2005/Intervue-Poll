@@ -76,15 +76,6 @@ app.post("/api/poll/create", (req, res) => {
     return res.status(400).json({ error: "Question and at least 2 options are required" });
   }
 
-  const studentsArray = Array.from(pollData.students.values());
-  const answersArray = Array.from(pollData.answers.values());
-
-  if (pollData.currentQuestion && answersArray.length < studentsArray.length) {
-    return res.status(400).json({
-      error: "Cannot create new poll. Previous question not completed by all students."
-    });
-  }
-
   pollData.pollId = uuidv4();
   pollData.currentQuestion = { question, options, createdAt: new Date() };
   pollData.isActive = true;

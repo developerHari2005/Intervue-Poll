@@ -1,54 +1,62 @@
-import io from 'socket.io-client';
-import { setPollData, setNewPoll, updateResults, addStudent, removeStudent } from '../store/pollSlice';
-import { setInitialMessages, addMessage } from '../store/chatSlice';
-import { logout, setKicked } from '../store/userSlice';
+import io from "socket.io-client";
+import {
+  setPollData,
+  setNewPoll,
+  updateResults,
+  addStudent,
+  removeStudent,
+} from "../store/pollSlice";
+import { setInitialMessages, addMessage } from "../store/chatSlice";
+import { logout, setKicked } from "../store/userSlice";
 
 let socket = null;
 
 export const connectSocket = (dispatch) => {
-  socket = io('https://intervue-poll-1-laf7.onrender.com', {
-    transports: ['websocket']
+  const isProduction = window.location.hostname !== 'localhost';
+  const socketUrl = isProduction ? window.location.origin + "/api" : "http://localhost:8001/api";
+  socket = io(socketUrl, {
+    transports: ["websocket"],
   });
 
-  socket.on('connect', () => {
-    console.log('Connected to server');
+  socket.on("connect", () => {
+    console.log("Connected to server");
   });
 
-  socket.on('pollStatus', (data) => {
+  socket.on("pollStatus", (data) => {
     dispatch(setPollData(data));
   });
 
-  socket.on('newPoll', (data) => {
+  socket.on("newPoll", (data) => {
     dispatch(setNewPoll(data));
   });
 
-  socket.on('pollResults', (data) => {
+  socket.on("pollResults", (data) => {
     dispatch(updateResults(data));
   });
 
-  socket.on('studentJoined', (data) => {
+  socket.on("studentJoined", (data) => {
     dispatch(addStudent(data.student));
   });
 
-  socket.on('studentLeft', (data) => {
+  socket.on("studentLeft", (data) => {
     dispatch(removeStudent(data.studentId));
   });
 
-  socket.on('chatHistory', (messages) => {
+  socket.on("chatHistory", (messages) => {
     dispatch(setInitialMessages(messages));
   });
 
-  socket.on('newChatMessage', (message) => {
+  socket.on("newChatMessage", (message) => {
     dispatch(addMessage(message));
   });
 
-  socket.on('kicked', () => {
+  socket.on("kicked", () => {
     dispatch(setKicked(true));
     dispatch(logout());
   });
 
-  socket.on('disconnect', () => {
-    console.log('Disconnected from server');
+  socket.on("disconnect", () => {
+    console.log("Disconnected from server");
   });
 
   return socket;
@@ -63,25 +71,25 @@ export const disconnectSocket = () => {
 
 export const joinAsTeacher = () => {
   if (socket) {
-    socket.emit('joinAsTeacher');
+    socket.emit("joinAsTeacher");
   }
 };
 
 export const joinAsStudent = (studentId) => {
   if (socket) {
-    socket.emit('joinAsStudent', { studentId });
+    socket.emit("joinAsStudent", { studentId });
   }
 };
 
 export const sendChatMessage = (message) => {
   if (socket) {
-    socket.emit('chatMessage', message);
+    socket.emit("chatMessage", message);
   }
 };
 
 export const kickStudent = (studentId) => {
   if (socket) {
-    socket.emit('kickStudent', { studentId });
+    socket.emit("kickStudent", { studentId });
   }
 };
 
