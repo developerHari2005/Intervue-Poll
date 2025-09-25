@@ -12,7 +12,6 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// Apply CORS only in development
 if (process.env.NODE_ENV !== "production") {
   app.use(cors({
     origin: "http://localhost:3000",
@@ -20,7 +19,6 @@ if (process.env.NODE_ENV !== "production") {
   }));
 }
 
-// Configure Socket.IO
 const io = socketIo(server, {
   cors: process.env.NODE_ENV !== "production" ? {
     origin: "http://localhost:3000",
@@ -31,7 +29,6 @@ const io = socketIo(server, {
 
 app.use(express.json());
 
-// ---------------- Poll Data ----------------
 let pollData = {
   currentQuestion: null,
   students: new Map(),
@@ -42,12 +39,10 @@ let pollData = {
   chatMessages: []
 };
 
-// ---------------- API Routes ----------------
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Server is running" });
 });
 
-// Get poll status
 app.get("/api/poll/status", (req, res) => {
   const studentsArray = Array.from(pollData.students.values());
   const answersArray = Array.from(pollData.answers.values());
@@ -63,7 +58,6 @@ app.get("/api/poll/status", (req, res) => {
   });
 });
 
-// Create new poll (Teacher)
 app.post("/api/poll/create", (req, res) => {
   const { question, options, timeLimit = 60 } = req.body;
 
@@ -99,7 +93,6 @@ app.post("/api/poll/create", (req, res) => {
   });
 });
 
-// Submit answer (Student)
 app.post("/api/poll/answer", (req, res) => {
   const { studentId, answer } = req.body;
 
@@ -127,7 +120,6 @@ app.post("/api/poll/answer", (req, res) => {
   res.json({ success: true, answer });
 });
 
-// Register student
 app.post("/api/student/register", (req, res) => {
   const { name } = req.body;
 
@@ -161,13 +153,11 @@ app.post("/api/student/register", (req, res) => {
   });
 });
 
-// Get poll results
 app.get("/api/poll/results", (req, res) => {
   const results = calculateResults();
   res.json(results);
 });
 
-// ---------------- Helper ----------------
 function calculateResults() {
   const answersArray = Array.from(pollData.answers.values());
   const optionsCount = {};
@@ -194,7 +184,6 @@ function calculateResults() {
   };
 }
 
-// ---------------- Socket.IO ----------------
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
@@ -245,8 +234,6 @@ io.on("connection", (socket) => {
     }
   });
 });
-
-// ---------------- Serve React in Production ----------------
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/build")));
 
@@ -255,7 +242,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// ---------------- Start Server ----------------
 const PORT = process.env.PORT || 8001;
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
