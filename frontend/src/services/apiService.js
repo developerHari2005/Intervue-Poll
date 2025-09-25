@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://intervue-poll-1-laf7.onrender.com:8081/api';
+const API_BASE_URL = 'https://intervue-poll-1-laf7.onrender.com/api';
 
 class ApiService {
   async request(endpoint, options = {}) {
