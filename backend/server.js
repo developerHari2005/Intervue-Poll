@@ -4,6 +4,10 @@ const socketIo = require("socket.io");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
 
 const app = express();
 const server = http.createServer(app);
