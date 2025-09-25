@@ -6,7 +6,7 @@ import { logout, setKicked } from '../store/userSlice';
 let socket = null;
 
 export const connectSocket = (dispatch) => {
-  socket = io('http://localhost:8001', {
+  socket = io('https://intervue-poll-1-laf7.onrender.com', {
     transports: ['websocket']
   });
 

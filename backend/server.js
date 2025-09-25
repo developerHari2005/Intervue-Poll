@@ -19,13 +19,24 @@ if (process.env.NODE_ENV !== "production") {
   }));
 }
 
+// const io = socketIo(server, {
+//   cors: process.env.NODE_ENV !== "production" ? {
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST"],
+//     credentials: true
+//   } : undefined
+// });
+
 const io = socketIo(server, {
-  cors: process.env.NODE_ENV !== "production" ? {
-    origin: "http://localhost:3000",
+  cors: {
+    origin: process.env.NODE_ENV === "production"
+      ? "https://intervue-poll-1-laf7.onrender.com"
+      : "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true
-  } : undefined
+  }
 });
+
 
 app.use(express.json());
 
